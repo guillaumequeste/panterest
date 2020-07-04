@@ -79,3 +79,9 @@ Fermer le serveur (symfony server:stop) et le relancer (symfony serve -d)
 
 (Ordonner les pins sur la page d'accueil)
 Dans le fichier 'PinsController.php', modifier : '$pins = $pinRepository->findBy([], ['createdAt' => 'DESC']);'
+
+
+(Créer un formulaire)
+- symfony console make:form
+    PinType
+    Pin
