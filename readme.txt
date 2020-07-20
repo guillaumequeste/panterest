@@ -85,3 +85,18 @@ Dans le fichier 'PinsController.php', modifier : '$pins = $pinRepository->findBy
 - symfony console make:form
     PinType
     Pin
+
+
+(Créer un message flash)
+Dans 'PinsController.php', ajouter '$this->addFlash('success', 'Pin successfully created !');'
+et ajouter dans le fichier twig (ici on a mis cela dans un fichier '_flash_messages.html.twig' et on l'a inclus dans le fichier 'base.html.twig'):
+{% for type, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-{{ type }}" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+
+VIDEO 4 9min36
