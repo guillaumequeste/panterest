@@ -11,8 +11,9 @@
 11) Création d'un formulaire
 12) Création d'un message flash
 13) Validation serveur
-14) Charger bootstrap
+14) Charger bootstrap (sans webpack encore)
 15) Création header (et footer)
+16) Installer Webpack Encore
 
 
 1) - symfony new panterest --full
@@ -127,3 +128,23 @@ Pour avoir un theme bootstrap pour les formulaires :
 
 15) On crée un fichier '_nav.html.twig' dans le dossier 'templates/layouts/partials'
 On inclut le fichier dans 'base.html.twig' avec '{{ include('layouts/partials/_nav.html.twig') }}'
+
+
+16) - composer req Encore
+    - yarn
+    Dans le dossier 'assets/css', on crée un fichier 'style.css'
+    Dans le fichier 'assets/js/app.js', on importe également le fichier 'style.css' : import '../css/style.css';
+    - yarn dev ou - yarn watch   (dev: quitte à la fin, watch: compile en temps réel)
+    -> il crée un fichier 'public/build/app.css' qui prend en compte 'app.css' et 'style.css'
+    (dans le fichier 'base.html.twig' : <link rel="stylesheet" href="{{ asset('build/app.css') }}">)
+    Pour utiliser SASS, dans le fichier 'webpack.config.js', activer .enableSassLoader() (enlever les 2 //)
+    - yarn dev  -> error, on nous dit d 'installer yarn add sass...
+    Renommer les fichier 'app.scss' et 'style.scss' et dans le fichier 'assets/js/app.js', renommer en scss
+    - yarn dev   (nouveu fichier css créé)
+    Pour installer bootstrap :
+    - yarn add bootstrap --dev
+    et importer dans le fichier 'app.scss' ou 'style.scss' : @import "~bootstrap/scss/bootstrap";
+    - yarn add jquery popper.js --dev
+    et importer jquery et bootstrap dans le fichier 'assets/js/app.js' :
+        import $ from 'jquery';
+        import 'bootstrap';
