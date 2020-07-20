@@ -3,11 +3,12 @@
 {% block title 'New Pin' %}
 
 {% block body %}
-    <h1>Create Pin</h1>
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <h1>Create Pin</h1>
 
-    {{ form_start(monFormulaire) }}
-        {{ form_widget(monFormulaire) }}
+            {{ include('layouts/partials/_form.html.twig') }}
 
-        <input type="submit" value="Create Pin" formnovalidate>
-    {{ form_end(monFormulaire) }}
+        </div>
+    </div>
 {% endblock %}
