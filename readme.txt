@@ -266,4 +266,5 @@ On inclut le fichier dans 'base.html.twig' avec '{{ include('layouts/partials/_n
                 var inputFile = e.currentTarget;
                 $(inputFile).parent().find('.custom-file-label').html(inputFile.files[0].name);
             })
-        
+        Dans le fichier 'templates/pins/index.html.twig', ajouter :
+            <img src="/uploads/pins/{{ pin.imageName }}"/>
