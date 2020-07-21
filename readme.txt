@@ -14,6 +14,7 @@
 14) Charger bootstrap (sans webpack encore)
 15) Création header (et footer)
 16) Installer Webpack Encore
+17) Upload files
 
 
 1) - symfony new panterest --full
@@ -93,6 +94,22 @@ Fermer le serveur (symfony server:stop) et le relancer (symfony serve -d)
   Pour pouvoir mettre un titre vide, mettre le point d'interrogation :
   'Pin.php' : public function setTitle(?string $title): self
 
+  Autre :
+    - symfony console make:entity Pin
+        imageName
+        string
+        255
+        yes
+        enter
+        symfony console make:migration
+        dans le nouveau fichier de migration :
+            public function getDescription() : string
+            {
+                return 'Add image_name field to pins table';
+            }
+        symfony console doctrine:migrations:migrate
+        yes
+
 
 10) Dans le fichier 'PinsController.php', modifier : '$pins = $pinRepository->findBy([], ['createdAt' => 'DESC']);'
 
@@ -148,3 +165,71 @@ On inclut le fichier dans 'base.html.twig' avec '{{ include('layouts/partials/_n
     et importer jquery et bootstrap dans le fichier 'assets/js/app.js' :
         import $ from 'jquery';
         import 'bootstrap';
+
+
+17) on utilise un bundle :
+    - composer require vich/uploader-bundle
+      y
+    Dans le fichier 'config/packages/vich_uploader.yaml' :
+        vich_uploader:
+        db_driver: orm
+
+        mappings:
+            pin_image:
+                uri_prefix: /uploads/pins
+                upload_destination: '%kernel.project_dir%/public/uploads/pins'
+                namer: Vich\UploaderBundle\Naming\UniqidNamer
+    Dans le fichier 'Pin.php', on ajoute :
+        use Symfony\Component\HttpFoundation\File\File;
+        use Vich\UploaderBundle\Mapping\Annotation as Vich;
+
+        * @Vich\Uploadable
+
+        /**
+        * NOTE: This is not a mapped field of entity metadata, just a simple property.
+        * 
+        * @Vich\UploadableField(mapping="pin_image", fileNameProperty="imageName")
+        * 
+        * @var File|null
+        */
+        private $imageFile;
+
+        /**
+        * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
+        * of 'UploadedFile' is injected into this setter to trigger the update. If this
+        * bundle's configuration parameter 'inject_on_load' is set to 'true' this setter
+        * must be able to accept an instance of 'File' as the bundle will inject one here
+        * during Doctrine hydration.
+        *
+        * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null $imageFile
+        */
+        public function setImageFile(?File $imageFile = null): void
+        {
+            $this->imageFile = $imageFile;
+
+            if (null !== $imageFile) {
+                // It is required that at least one field changes if you are using doctrine
+                // otherwise the event listeners won't be called and the file is lost
+                $this->updatedAt = new \DateTimeImmutable();
+            }
+        }
+
+        public function getImageFile(): ?File
+        {
+            return $this->imageFile;
+        }
+
+        Dans le fichier 'Form/PinType.php', ajouter :
+            use Vich\UploaderBundle\Form\Type\VichImageType;
+
+            ->add('imageFile', VichImageType::class, [
+                'label' => 'Image (JPG, JPEG or PNG file)',
+                'required' => false,
+                'allow_delete' => true,
+                'download_uri' => false
+            ])
+        
+        Dans le fichier '.gitignore', ajouter :
+            ###> custom end vars ###
+            /public/uploads/
+            ###< custom end vars ###
