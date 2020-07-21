@@ -261,4 +261,9 @@ On inclut le fichier dans 'base.html.twig' avec '{{ include('layouts/partials/_n
             /public/uploads/
             ###< custom end vars ###
 
+        Dans le fichier 'assets/js/app.js', ajouter (pour avoir le nom du fichier dans le champ input):
+            $('.custom-file-input').on('change', function(e) {
+                var inputFile = e.currentTarget;
+                $(inputFile).parent().find('.custom-file-label').html(inputFile.files[0].name);
+            })
         
