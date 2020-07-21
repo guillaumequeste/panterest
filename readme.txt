@@ -220,6 +220,31 @@ On inclut le fichier dans 'base.html.twig' avec '{{ include('layouts/partials/_n
             return $this->imageFile;
         }
 
+        Installer le bundle liip_imagine :
+        - composer require liip/imagine-bundle
+            y
+        
+        Dans le fichier 'config/packages/liip_imagine.yaml' :
+            # See dos how to configure the bundle: https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html
+            liip_imagine:
+                # valid drivers options include "gd" or "gmagick" or "imagick"
+                driver: "gd"
+
+                filter_sets:
+                    squared_thumbnail_medium:
+                        filters:
+                            thumbnail:
+                                size: [300, 300]
+                                mode: outbound
+                                allow_upscale: true
+                
+                    squared_thumbnail_small:
+                        filters:
+                            thumbnail:
+                                size: [200, 200]
+                                mode: outbound
+                                allow_upscale: true
+
         Dans le fichier 'Form/PinType.php', ajouter :
             use Vich\UploaderBundle\Form\Type\VichImageType;
 
@@ -227,10 +252,13 @@ On inclut le fichier dans 'base.html.twig' avec '{{ include('layouts/partials/_n
                 'label' => 'Image (JPG, JPEG or PNG file)',
                 'required' => false,
                 'allow_delete' => true,
-                'download_uri' => false
+                'download_uri' => false,
+                'imagine_pattern' => 'squared_thumbnail_small'
             ])
         
         Dans le fichier '.gitignore', ajouter :
             ###> custom end vars ###
             /public/uploads/
             ###< custom end vars ###
+
+        
