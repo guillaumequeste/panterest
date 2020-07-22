@@ -15,6 +15,7 @@
 15) Création header (et footer)
 16) Installer Webpack Encore
 17) Upload files
+18) Effet zoom
 
 
 1) - symfony new panterest --full
@@ -268,3 +269,8 @@ On inclut le fichier dans 'base.html.twig' avec '{{ include('layouts/partials/_n
             })
         Dans le fichier 'templates/pins/index.html.twig', ajouter :
             <img src="/uploads/pins/{{ pin.imageName }}"/>
+
+
+18) div       -> class="mw-100 overflow-hidden"
+        img   -> transition: transform 0.3s ease-out;
+        img:hover ->transform: scale(1.075);
