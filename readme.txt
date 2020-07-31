@@ -16,7 +16,8 @@
 16) Installer Webpack Encore
 17) Upload files
 18) Effet zoom
-19) Créer la table 'users'
+19) Création de la table 'users'
+20) Création d'utilisateurs via le terminal
 
 
 1) - symfony new panterest --full
@@ -299,6 +300,7 @@ On inclut le fichier dans 'base.html.twig' avec '{{ include('layouts/partials/_n
     Dans le fichier 'src/Entity/User.php', ajouter :
         * @ORM\Table(name="users")
         * @ORM\HasLifecycleCallbacks
+        la fonction updateTimeStamps() et 'options={"default": "CURRENT_TIMESTAMP"}' pour createdAt et updatedAt
     
     symfony console make:entity user
     createdAt
@@ -320,3 +322,27 @@ On inclut le fichier dans 'base.html.twig' avec '{{ include('layouts/partials/_n
     Dans phpmyadmin, dans la structure de la table 'users',
     pour les champs created_at et updated_at, cliquer sur 'Change' à droite
     et choisir 'Default' -> 'CURRENT_TIMESTAMP'
+
+
+20) - symfony console psysh
+    - use App\Entity\User;
+    - $user1 = new User;
+    - dump($user1)
+    - $user1->setFirstName('John')
+    - dump($user1)
+    - $user1->setLastName('Doe');
+    - $user1->setEmail('johndoe@example.com')
+    - dump($user1)
+
+     Ouvrir un nouvel onglet dans le terminal :
+     - symfony console security:encode-password
+     - taper le mot de passe et enter
+     - copier le mot de passe encodé
+
+    - $user1->setPassword('$2y$13$4Xm66DzJitnCOVToQf9I0Og32dZpPI4zzMDe75t1UZssV.x9fB8ZK')
+    - dump($user1)
+    - $em = $container->get('doctrine')->getManager();
+    - $em->persist($user1);
+    - $em->flush()
+    (Ici ne marche pas car le champ created_at ne doit pas être null,
+    le faire via phpmyadmin, on est obligé de mettre eun rôle [1])
