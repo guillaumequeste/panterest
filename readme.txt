@@ -16,6 +16,7 @@
 16) Installer Webpack Encore
 17) Upload files
 18) Effet zoom
+19) Créer la table 'users'
 
 
 1) - symfony new panterest --full
@@ -274,3 +275,48 @@ On inclut le fichier dans 'base.html.twig' avec '{{ include('layouts/partials/_n
 18) div       -> class="mw-100 overflow-hidden"
         img   -> transition: transform 0.3s ease-out;
         img:hover ->transform: scale(1.075);
+
+
+19) - symfony console make:user
+    user
+    yes
+    email
+    yes
+    enter
+
+    symfony console make:entity user
+    firstName
+    string
+    255
+    no
+    lastName
+    string
+    255
+    no
+    enter
+
+    Réorganiser le fichier 'src/Entity/User.php' comme l'on veut (ordre que l'on souhaite)
+    Dans le fichier 'src/Entity/User.php', ajouter :
+        * @ORM\Table(name="users")
+        * @ORM\HasLifecycleCallbacks
+    
+    symfony console make:entity user
+    createdAt
+    datetime
+    no
+    updatedAt
+    datetime
+    no
+    enter
+
+    symfony console make:migration
+
+    Dans le fichier de migration, ajouter :
+        return 'Create users table';
+
+    symfony console doctrine:migrations:migrate
+    yes
+
+    Dans phpmyadmin, dans la structure de la table 'users',
+    pour les champs created_at et updated_at, cliquer sur 'Change' à droite
+    et choisir 'Default' -> 'CURRENT_TIMESTAMP'
