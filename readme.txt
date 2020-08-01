@@ -18,6 +18,10 @@
 18) Effet zoom
 19) Création de la table 'users'
 20) Création d'utilisateurs via le terminal
+21) Relation table 'users' et table 'pins'
+22) Nouvelle création d'utilisateurs et de pins via le terminal
+    (+ PRATIQUE de créer directement dans phpmyadmin, vérifier à bien mettre default->current_timestamp pour 'created_at' et 'updated_at' et remplir 'user-id')
+23) Création d'un getter pourr récupérer le prénom et le nom de l'utilisateur
 
 
 1) - symfony new panterest --full
@@ -346,3 +350,47 @@ On inclut le fichier dans 'base.html.twig' avec '{{ include('layouts/partials/_n
     - $em->flush()
     (Ici ne marche pas car le champ created_at ne doit pas être null,
     le faire via phpmyadmin, on est obligé de mettre eun rôle [1])
+
+
+21) On veut lier la table 'users' et la table 'pins'.
+    Chaque utilisateur peut créer plusieurs pins et chaque pin est lié à un seul utilisateur.
+    - symfony console make:entity Pin  (on aurait aussi pu partir de l'entité User)
+    - user
+    - relation
+    - User
+    - ManyToOne
+    - no
+    - yes
+    - pins
+    - yes
+    - enter
+    Vider la base de données pour ne pas avoir d'erreur lors de la migration
+    (car on a dit que chaque pin doit être lié à un utilisateur, chose que l'on n' a pas pu faire jusqu'à présent)
+    - symfony console make:migration
+    - symfony console doctrine:migrations:migrate
+
+
+22) - symfony console psysh
+    - use App\Entity\{User, Pin};
+    - $u1 = new User;
+    - $u1->setFirstName('John')
+    - $u1->setLastName('Doe')
+    Nouvel onglet :
+    - symfony console security:encode-password
+    - secret
+    - $u1->setPassword('$2y$13$eGVU36lxtppqt2EMhnhX2uYNb4EcD.5vxhq/JSqU7MpQ26T.4tbny');
+    - dump($u1)
+    - $u1->setEmail('johndoe@example.com')
+    - $em = $container->get('doctrine')->getManager();
+    - $em->persist($u1)
+    - $em->flush()
+    etc...
+
+
+23) Dans le fichier 'src/Entity/User.php', ajouter :
+        public function getFullName(): ?string
+        {
+            return $this->getFirstName() . ' ' . $this->getLastName();
+        }
+    Dans le template voulu, mettre :
+        {{ pin.user.fullName }}
