@@ -20,8 +20,14 @@
 20) Création d'utilisateurs via le terminal
 21) Relation table 'users' et table 'pins'
 22) Nouvelle création d'utilisateurs et de pins via le terminal
-    (+ PRATIQUE de créer directement dans phpmyadmin, vérifier à bien mettre default->current_timestamp pour 'created_at' et 'updated_at' et remplir 'user-id')
+    (+ PRATIQUE de créer directement dans phpmyadmin, vérifier à bien mettre default->current_timestamp pour 'created_at' et 'updated_at' et remplir 'user-id', pour l'instant on laisse le role vide (null))
 23) Création d'un getter pourr récupérer le prénom et le nom de l'utilisateur
+24) Boutons visibles dans la barre de navigation
+25) Authentification
+26) Message flash de connexion
+27) Bloquer l'accès à la page login lorsque l'on est connecté
+28) Se déconnecter
+29) Rester connecté même après la fermeture du navigateur
 
 
 1) - symfony new panterest --full
@@ -394,3 +400,50 @@ On inclut le fichier dans 'base.html.twig' avec '{{ include('layouts/partials/_n
         }
     Dans le template voulu, mettre :
         {{ pin.user.fullName }}
+
+
+24) Dans le fichier 'src/templates/layouts/partials/_nav.html.twig', mettre :
+    {% if app.user %}
+    ...
+    {% else %}
+    ...
+    {% endif %}
+
+
+25) - symfony console make:auth
+    - 1   (Login form authenticator)
+    - LoginFormAuthenticator
+    - SecurityController
+    - yes
+    Les fichiers suivants sont créés :
+        - src/Security/LoginFormAuthenticator.php
+        - templates/security/login.html.twig   (à modifier si besoin)
+
+
+26) Fonctionne avec le 12)
+    Dans le fichier 'LoginFormAuthenticator.php', ajouter :
+    $request->getSession()->getFlashBag()->add('success', 'Logged in successfully!');
+
+
+27) Dans le fichier 'src/Controller/SecurieyController.php', décommenter :
+    if ($this->getUser()) {
+        $this->addFlash('error', 'Already loggedin!');
+        return $this->redirectToRoute('app_home');
+    }
+
+
+28) Dans le fichier 'config/packages/security.yaml' :
+    logout:
+        path: app_logout
+        target: app_home
+
+
+29) Dans le fichier 'config/packages/security.yaml', ajouter :
+    remember_me:
+        secret: '%kernel.secret%'
+    Dans le fichier 'templates/security/login.html.twig', décommenter :
+    <div class="checkbox mb-3">
+        <label>
+            <input type="checkbox" name="_remember_me"> Remember me
+        </label>
+    </div>
